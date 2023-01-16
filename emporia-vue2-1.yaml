@@ -117,8 +117,8 @@ sensor:
       - { phase_id: phase_a, input: "12", power: { name: "Br12 Power", id: br12, filters: [ *moving_avg, *pos ] } }
       - { phase_id: phase_b, input: "13", power: { name: "Br13 Power", id: br13, filters: [ *moving_avg, *pos ] } }
       - { phase_id: phase_b, input: "14", power: { name: "Br14 Power", id: br14, filters: [ *moving_avg, *pos, multiply: 2 ] } }
-      - { phase_id: phase_b, input: "15", power: { name: "Br20 Power", id: br20, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_a, input: "16", power: { name: "Br21 Power", id: br21, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input: "15", power: { name: "Br26 Power", id: br26, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input: "16", power: { name: "Br28 Power", id: br28, filters: [ *moving_avg, *pos ] } }
   - platform: template
     name: "Total Power"
     lambda: return id(a_phase_power).state + id(b_phase_power).state;
@@ -143,5 +143,5 @@ sensor:
   - { power_id: br12, platform: total_daily_energy, accuracy_decimals: 0, name: "Br12 Daily Energy" }
   - { power_id: br13, platform: total_daily_energy, accuracy_decimals: 0, name: "Br13 Daily Energy" }
   - { power_id: br14, platform: total_daily_energy, accuracy_decimals: 0, name: "Br14 Daily Energy" }
-  - { power_id: br20, platform: total_daily_energy, accuracy_decimals: 0, name: "Br20 Daily Energy" }
-  - { power_id: br21, platform: total_daily_energy, accuracy_decimals: 0, name: "Br21 Daily Energy" }
+  - { power_id: br26, platform: total_daily_energy, accuracy_decimals: 0, name: "Br26 Daily Energy" }
+  - { power_id: br28, platform: total_daily_energy, accuracy_decimals: 0, name: "Br28 Daily Energy" }
