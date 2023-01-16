@@ -1,0 +1,150 @@
+substitutions:
+  name: emporia-vue2-fafb10
+  friendly_name: Emporia Vue2-1
+esphome:
+  name: $name
+  comment: Emporia Vue 2
+  name_add_mac_suffix: false
+  # This will allow for (future) project identification,
+  # configuration and updates.
+  project:
+    name: meddle.emporia-vue2
+    version: "1.0"
+
+logger:
+
+external_components:
+  - source: github://flaviut/esphome@emporia-vue-2022.4.0
+    components: [ emporia_vue ]
+dashboard_import:
+#  package_import_url: github://cpyarger/esphome-templates/emporia-vue2.yaml@main
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+    version: recommended
+
+# Enable Home Assistant API
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  domain: .lan
+# Sets up the improv via serial client for Wi-Fi provisioning
+improv_serial:
+# In combination with the `ap` this allows the user
+# to provision wifi credentials to the device.
+ota:
+api:
+# Sets up Bluetooth LE (Only on ESP32) to allow the user
+# to provision wifi credentials to the device.
+esp32_improv:
+  authorizer: none
+  
+i2c:
+  sda: 21
+  scl: 22
+  scan: false
+  frequency: 200kHz  # recommended range is 50-200kHz
+  id: i2c_a
+time:
+  - platform: sntp
+    id: my_time
+
+# these are called references in YAML. They allow you to reuse
+# this configuration in each sensor, while only defining it once
+.defaultfilters:
+  - &moving_avg
+    # we capture a new sample every 0.24 seconds, so the time can
+    # be calculated from the number of samples as n * 0.24.
+    sliding_window_moving_average:
+      # we average over the past 2.88 seconds
+      window_size: 12
+      # we push a new value every 1.44 seconds
+      send_every: 6
+  - &invert
+    # invert and filter out any values below 0.
+    lambda: 'return max(-x, 0.0f);'
+  - &pos
+    # filter out any values below 0.
+    lambda: 'return max(x, 0.0f);'
+  - &abs
+    # take the absolute value of the value
+    lambda: 'return abs(x);'
+
+sensor:
+  - platform: emporia_vue
+    i2c_id: i2c_a
+    phases:
+      - id: phase_a  # Verify that this specific phase/leg is connected to correct input wire color on device listed below
+        input: BLACK  # Vue device wire color
+        calibration: 0.02293  # 0.022 is used as the default as starting point but may need adjusted to ensure accuracy
+        # To calculate new calibration value use the formula <in-use calibration value> * <accurate voltage> / <reporting voltage>
+        voltage:
+          name: "A Phase Voltage"
+          filters: [*moving_avg, *pos]
+      - id: phase_b  # Verify that this specific phase/leg is connected to correct input wire color on device listed below
+        input: RED  # Vue device wire color
+        calibration: 0.02139  # 0.022 is used as the default as starting point but may need adjusted to ensure accuracy
+        # To calculate new calibration value use the formula <in-use calibration value> * <accurate voltage> / <reporting voltage>
+        voltage:
+          name: "B Phase Voltage"
+          filters: [*moving_avg, *pos]
+    ct_clamps:
+      - phase_id: phase_a
+        input: "A"  # Verify the CT going to this device input also matches the phase/leg
+        power:
+          name: "A Phase Power"
+          id: phase_a_power
+          device_class: power
+          filters: [*moving_avg, *pos]
+      - phase_id: phase_b
+        input: "B"  # Verify the CT going to this device input also matches the phase/leg
+        power:
+          name: "B Phase Power"
+          id: phase_b_power
+          device_class: power
+          filters: [*moving_avg, *pos]
+      # Pay close attention to set the phase_id for each breaker by matching it to the phase/leg it connects to in the panel
+      - { phase_id: phase_b, input:  "1", power: { name:  "Br01 Power", id:  br01, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input:  "2", power: { name:  "Br02 Power", id:  br02, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input:  "3", power: { name:  "Br03 Power", id:  br03, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input:  "4", power: { name:  "Br04 Power", id:  br04, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input:  "5", power: { name:  "Br05 Power", id:  br05, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input:  "6", power: { name:  "Br06 Power", id:  br06, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input:  "7", power: { name:  "Br07 Power", id:  br07, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input:  "8", power: { name:  "Br08 Power", id:  br08, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input:  "9", power: { name:  "Br09 Power", id:  br09, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input: "10", power: { name: "Br10 Power", id: br10, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input: "11", power: { name: "Br11 Power", id: br11, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input: "12", power: { name: "Br12 Power", id: br12, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input: "13", power: { name: "Br13 Power", id: br13, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input: "14", power: { name: "Br14 Power", id: br14, filters: [ *moving_avg, *pos, multiply: 2 ] } }
+      - { phase_id: phase_b, input: "15", power: { name: "Br20 Power", id: br20, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input: "16", power: { name: "Br21 Power", id: br21, filters: [ *moving_avg, *pos ] } }
+  - platform: template
+    name: "Total Power"
+    lambda: return id(phase_a_power).state + id(phase_b_power).state;
+    update_interval: 1s
+    id: total_power
+    unit_of_measurement: "W"
+  - platform: total_daily_energy
+    name: "Total Daily Energy"
+    power_id: total_power
+    accuracy_decimals: 0
+  - { power_id:  br01, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br01 Daily Energy" }
+  - { power_id:  br02, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br02 Daily Energy" }
+  - { power_id:  br03, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br03 Daily Energy" }
+  - { power_id:  br04, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br04 Daily Energy" }
+  - { power_id:  br05, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br05 Daily Energy" }
+  - { power_id:  br06, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br06 Daily Energy" }
+  - { power_id:  br07, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br07 Daily Energy" }
+  - { power_id:  br08, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br08 Daily Energy" }
+  - { power_id:  br09, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br09 Daily Energy" }
+  - { power_id: br10, platform: total_daily_energy, accuracy_decimals: 0, name: "Br10 Daily Energy" }
+  - { power_id: br11, platform: total_daily_energy, accuracy_decimals: 0, name: "Br11 Daily Energy" }
+  - { power_id: br12, platform: total_daily_energy, accuracy_decimals: 0, name: "Br12 Daily Energy" }
+  - { power_id: br13, platform: total_daily_energy, accuracy_decimals: 0, name: "Br13 Daily Energy" }
+  - { power_id: br14, platform: total_daily_energy, accuracy_decimals: 0, name: "Br14 Daily Energy" }
+  - { power_id: br20, platform: total_daily_energy, accuracy_decimals: 0, name: "Br20 Daily Energy" }
+  - { power_id: br21, platform: total_daily_energy, accuracy_decimals: 0, name: "Br21 Daily Energy" }
