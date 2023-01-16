@@ -1,10 +1,10 @@
 substitutions:
-  name: emporia-vue2-fafb10
+  name: emporia-vue2
   friendly_name: Emporia Vue2-1
 esphome:
   name: $name
   comment: Emporia Vue 2
-  name_add_mac_suffix: false
+  name_add_mac_suffix: true
   # This will allow for (future) project identification,
   # configuration and updates.
   project:
