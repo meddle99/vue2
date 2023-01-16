@@ -1,7 +1,7 @@
 esphome:
-  name: emporia-vue2
+  name: emporia-vue2-fafb10
   comment: Emporia Vue2-1
-  name_add_mac_suffix: true
+  name_add_mac_suffix: false
   # This will allow for (future) project identification,
   # configuration and updates.
   project:
@@ -94,31 +94,31 @@ sensor:
           name: "A Phase Power"
           id: a_phase_power
           device_class: power
-          filters: [*moving_avg, *pos]
+          filters: [*moving_avg, *abs]
       - phase_id: phase_b
         input: "B"  # Verify the CT going to this device input also matches the phase/leg
         power:
           name: "B Phase Power"
           id: b_phase_power
           device_class: power
-          filters: [*moving_avg, *pos]
+          filters: [*moving_avg, *abs]
       # Pay close attention to set the phase_id for each breaker by matching it to the phase/leg it connects to in the panel
-      - { phase_id: phase_b, input:  "1", power: { name:  "Br01 Power", id:  br01, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_a, input:  "2", power: { name:  "Br02 Power", id:  br02, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_b, input:  "3", power: { name:  "Br03 Power", id:  br03, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_a, input:  "4", power: { name:  "Br04 Power", id:  br04, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_b, input:  "5", power: { name:  "Br05 Power", id:  br05, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_a, input:  "6", power: { name:  "Br06 Power", id:  br06, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_b, input:  "7", power: { name:  "Br07 Power", id:  br07, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_a, input:  "8", power: { name:  "Br08 Power", id:  br08, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_b, input:  "9", power: { name:  "Br09 Power", id:  br09, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_a, input: "10", power: { name: "Br10 Power", id: br10, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_b, input: "11", power: { name: "Br11 Power", id: br11, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_a, input: "12", power: { name: "Br12 Power", id: br12, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_b, input: "13", power: { name: "Br13 Power", id: br13, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_b, input: "14", power: { name: "Br14 Power", id: br14, filters: [ *moving_avg, *pos, multiply: 2 ] } }
-      - { phase_id: phase_b, input: "15", power: { name: "Br26 Power", id: br26, filters: [ *moving_avg, *pos ] } }
-      - { phase_id: phase_a, input: "16", power: { name: "Br28 Power", id: br28, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input:  "1", power: { name:  "Br01 Power", id:  ct01, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input:  "2", power: { name:  "Br03 Power", id:  ct02, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input:  "3", power: { name:  "Br05 Power", id:  ct03, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input:  "4", power: { name:  "Br07 Power", id:  ct04, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input:  "5", power: { name:  "Br09 Power", id:  ct05, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input:  "6", power: { name:  "Br11 Power", id:  ct06, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input:  "7", power: { name:  "Br13 Power", id:  ct07, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input:  "8", power: { name:  "Br15 Power", id:  ct08, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input:  "9", power: { name:  "Br17 Power", id:  ct09, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input: "10", power: { name: "Br19 Power", id: ct10, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input: "11", power: { name: "Br21 Power", id: ct11, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input: "12", power: { name: "Br23 Power", id: ct12, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input: "13", power: { name: "Br25 Power", id: ct13, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_b, input: "14", power: { name: "Br02 Power", id: ct14, filters: [ *moving_avg, *pos, multiply: 2 ] } }
+      - { phase_id: phase_b, input: "15", power: { name: "Br26 Power", id: ct15, filters: [ *moving_avg, *pos ] } }
+      - { phase_id: phase_a, input: "16", power: { name: "Br28 Power", id: ct16, filters: [ *moving_avg, *pos ] } }
   - platform: template
     name: "Total Power"
     lambda: return id(a_phase_power).state + id(b_phase_power).state;
@@ -129,19 +129,19 @@ sensor:
     name: "Total Daily Energy"
     power_id: total_power
     accuracy_decimals: 0
-  - { power_id:  br01, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br01 Daily Energy" }
-  - { power_id:  br02, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br02 Daily Energy" }
-  - { power_id:  br03, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br03 Daily Energy" }
-  - { power_id:  br04, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br04 Daily Energy" }
-  - { power_id:  br05, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br05 Daily Energy" }
-  - { power_id:  br06, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br06 Daily Energy" }
-  - { power_id:  br07, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br07 Daily Energy" }
-  - { power_id:  br08, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br08 Daily Energy" }
-  - { power_id:  br09, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br09 Daily Energy" }
-  - { power_id: br10, platform: total_daily_energy, accuracy_decimals: 0, name: "Br10 Daily Energy" }
-  - { power_id: br11, platform: total_daily_energy, accuracy_decimals: 0, name: "Br11 Daily Energy" }
-  - { power_id: br12, platform: total_daily_energy, accuracy_decimals: 0, name: "Br12 Daily Energy" }
-  - { power_id: br13, platform: total_daily_energy, accuracy_decimals: 0, name: "Br13 Daily Energy" }
-  - { power_id: br14, platform: total_daily_energy, accuracy_decimals: 0, name: "Br14 Daily Energy" }
-  - { power_id: br26, platform: total_daily_energy, accuracy_decimals: 0, name: "Br26 Daily Energy" }
-  - { power_id: br28, platform: total_daily_energy, accuracy_decimals: 0, name: "Br28 Daily Energy" }
+  - { power_id:  ct01, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br01 Daily Energy" }
+  - { power_id:  ct02, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br03 Daily Energy" }
+  - { power_id:  ct03, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br05 Daily Energy" }
+  - { power_id:  ct04, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br07 Daily Energy" }
+  - { power_id:  ct05, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br09 Daily Energy" }
+  - { power_id:  ct06, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br11 Daily Energy" }
+  - { power_id:  ct07, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br13 Daily Energy" }
+  - { power_id:  ct08, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br15 Daily Energy" }
+  - { power_id:  ct09, platform: total_daily_energy, accuracy_decimals: 0, name:  "Br17 Daily Energy" }
+  - { power_id: ct10, platform: total_daily_energy, accuracy_decimals: 0, name: "Br19 Daily Energy" }
+  - { power_id: ct11, platform: total_daily_energy, accuracy_decimals: 0, name: "Br21 Daily Energy" }
+  - { power_id: ct12, platform: total_daily_energy, accuracy_decimals: 0, name: "Br23 Daily Energy" }
+  - { power_id: ct13, platform: total_daily_energy, accuracy_decimals: 0, name: "Br25 Daily Energy" }
+  - { power_id: ct14, platform: total_daily_energy, accuracy_decimals: 0, name: "Br02 Daily Energy" }
+  - { power_id: ct15, platform: total_daily_energy, accuracy_decimals: 0, name: "Br26 Daily Energy" }
+  - { power_id: ct16, platform: total_daily_energy, accuracy_decimals: 0, name: "Br28 Daily Energy" }
