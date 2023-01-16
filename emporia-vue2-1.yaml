@@ -1,7 +1,7 @@
 esphome:
-  name: emporia-vue2-fafb10
+  name: emporia-vue2
   comment: Emporia Vue2-1
-  name_add_mac_suffix: false
+  name_add_mac_suffix: true
   # This will allow for (future) project identification,
   # configuration and updates.
   project:
