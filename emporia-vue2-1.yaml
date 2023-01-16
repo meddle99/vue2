@@ -17,7 +17,7 @@ external_components:
   - source: github://flaviut/esphome@emporia-vue-2022.4.0
     components: [ emporia_vue ]
 dashboard_import:
-#  package_import_url: github://cpyarger/esphome-templates/emporia-vue2.yaml@main
+  package_import_url: github://meddle99/vue2/emporia-vue2-1.yaml@main
 
 esp32:
   board: esp32dev
@@ -95,14 +95,14 @@ sensor:
         input: "A"  # Verify the CT going to this device input also matches the phase/leg
         power:
           name: "A Phase Power"
-          id: phase_a_power
+          id: a_phase_power
           device_class: power
           filters: [*moving_avg, *pos]
       - phase_id: phase_b
         input: "B"  # Verify the CT going to this device input also matches the phase/leg
         power:
           name: "B Phase Power"
-          id: phase_b_power
+          id: b_phase_power
           device_class: power
           filters: [*moving_avg, *pos]
       # Pay close attention to set the phase_id for each breaker by matching it to the phase/leg it connects to in the panel
@@ -124,7 +124,7 @@ sensor:
       - { phase_id: phase_a, input: "16", power: { name: "Br21 Power", id: br21, filters: [ *moving_avg, *pos ] } }
   - platform: template
     name: "Total Power"
-    lambda: return id(phase_a_power).state + id(phase_b_power).state;
+    lambda: return id(a_phase_power).state + id(b_phase_power).state;
     update_interval: 1s
     id: total_power
     unit_of_measurement: "W"
